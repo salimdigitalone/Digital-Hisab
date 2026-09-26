@@ -1,0 +1,101 @@
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f3f6fb;color:#172033;
+  -webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+.hidden{display:none !important}
+button,input,select{font:inherit}
+
+/* ---------- top app bar / install ---------- */
+.appbar{position:sticky;top:0;z-index:200;background:#111827;color:white;display:flex;align-items:center;
+  justify-content:space-between;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.appbar .brand{font-weight:bold;font-size:16px}
+.appbar .brand span{color:#60a5fa}
+#installBtn{background:#2563eb;color:white;border:0;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:bold}
+
+/* ---------- bottom nav (mobile-first) ---------- */
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:300;background:white;display:flex;
+  box-shadow:0 -2px 12px rgba(0,0,0,.08);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bottomnav button{flex:1;background:none;border:0;padding:9px 2px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:2px;color:#6b7280;font-size:10px}
+.bottomnav button .ic{font-size:19px}
+.bottomnav button.active{color:#2563eb}
+
+.main{padding:14px;padding-bottom:78px;max-width:960px;margin:0 auto}
+.page{display:none}
+.page.active{display:block}
+h1.page-title{font-size:20px;margin:4px 0 14px}
+
+/* ---------- cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.card{background:white;padding:14px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card-title{font-size:12px;color:#6b7280;margin-bottom:6px}
+.card-value{font-size:19px;font-weight:bold;overflow-wrap:anywhere}
+.income{color:#059669}.expense{color:#dc2626}.balance{color:#2563eb}
+
+.chart-box{background:white;padding:14px;border-radius:12px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.chart-box h3{margin:0 0 10px;font-size:14px}
+.chart-area{height:220px;position:relative}
+.chart-area canvas{width:100%;height:100%;display:block}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{padding:12px;background:#f8fafc;border-radius:10px;text-align:center}
+.stat h4{margin:0 0 5px;color:#6b7280;font-size:11px;font-weight:normal}
+.stat strong{font-size:14px}
+
+/* ---------- forms ---------- */
+.form-card,.table-card{background:white;padding:16px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column}
+.full{grid-column:1/-1}
+label{font-weight:bold;font-size:12px;margin-bottom:5px;color:#374151}
+input,select{padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:white;width:100%}
+input:focus,select:focus{outline:none;border-color:#2563eb}
+
+.buttons{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+button.btn{border:0;padding:10px 15px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px}
+.primary{background:#2563eb;color:white}.success{background:#059669;color:white}
+.danger{background:#dc2626;color:white}.secondary{background:#e5e7eb;color:#111827}.warning{background:#d97706;color:white}
+
+/* ---------- filters / lists ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters input,.filters select{min-width:130px;flex:1 1 130px}
+
+.tx-list{display:flex;flex-direction:column;gap:8px}
+.tx-item{background:white;border-radius:10px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;justify-content:space-between;gap:10px}
+.tx-item .tx-main{flex:1;min-width:0}
+.tx-item .tx-cat{font-weight:bold;font-size:13.5px}
+.tx-item .tx-sub{font-size:11.5px;color:#6b7280;margin-top:2px}
+.tx-item .tx-amt{font-weight:bold;white-space:nowrap;font-size:14px}
+.tx-item .tx-actions{display:flex;gap:6px;margin-top:6px}
+.tx-item .tx-actions button{border:0;background:#f3f4f6;padding:5px 8px;border-radius:6px;font-size:12px}
+.badge{padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:bold;display:inline-block;margin-bottom:3px}
+.badge-income{background:#d1fae5;color:#047857}.badge-expense{background:#fee2e2;color:#b91c1c}
+.empty-note{text-align:center;color:#9ca3af;padding:26px 10px;font-size:13px}
+
+/* ---------- category tree ---------- */
+.tree-type{font-size:15px;font-weight:bold;margin-top:14px;padding:9px 12px;background:#eef2ff;border-radius:8px}
+.tree-main{margin:9px 0 4px 10px;font-weight:bold;font-size:13.5px}
+.tree-sub{margin:6px 0 6px 24px;padding:8px;background:#f8fafc;border-radius:7px;font-size:13px}
+.tree-child{display:inline-flex;align-items:center;gap:5px;margin:5px 5px 0 0;padding:4px 9px;
+  border:1px solid #d1d5db;border-radius:20px;background:white;font-size:11.5px}
+.tree-child button{border:0;background:none;color:#dc2626;cursor:pointer;font-size:11px;padding:0}
+
+/* ---------- modal ---------- */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:5000;align-items:flex-end;justify-content:center}
+.modal-content{background:white;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:18px;
+  border-radius:16px 16px 0 0;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.modal-header h2{font-size:17px;margin:0}
+.close{font-size:22px;cursor:pointer;color:#6b7280;background:none;border:0}
+
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111827;color:white;
+  padding:10px 16px;border-radius:20px;display:none;z-index:9999;font-size:13px;max-width:88vw;text-align:center}
+
+.small-note{font-size:12px;color:#6b7280;margin-top:4px}
+.profile-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:13.5px}
+.profile-row strong{color:#374151}
+
+@media(min-width:760px){
+  .cards{grid-template-columns:repeat(4,1fr)}
+  .form-grid{grid-template-columns:repeat(2,1fr)}
+}

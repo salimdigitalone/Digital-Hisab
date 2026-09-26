@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ডিজিটাল হিসাব</title>
+<meta name="theme-color" content="#111827">
+<meta name="description" content="সম্পূর্ণ অফলাইন ব্যক্তিগত আয়-ব্যয় ট্র্যাকার">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="হিসাব">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="appbar">
+  <div class="brand">Digital <span>Hisab</span></div>
+  <button id="installBtn" class="hidden">📲 Install</button>
+</div>
+
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page active">
+    <h1 class="page-title">🏠 Dashboard</h1>
+    <div class="cards">
+      <div class="card"><div class="card-title">মোট আয়</div><div id="totalIncome" class="card-value income">৳ 0</div></div>
+      <div class="card"><div class="card-title">মোট ব্যয়</div><div id="totalExpense" class="card-value expense">৳ 0</div></div>
+      <div class="card"><div class="card-title">বর্তমান Balance</div><div id="balance" class="card-value balance">৳ 0</div></div>
+      <div class="card"><div class="card-title">Savings Rate</div><div id="savingsRate" class="card-value">0%</div></div>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-title">আজকের আয়</div><div id="todayIncome" class="card-value income">৳ 0</div></div>
+      <div class="card"><div class="card-title">আজকের ব্যয়</div><div id="todayExpense" class="card-value expense">৳ 0</div></div>
+      <div class="card"><div class="card-title">এই মাসের আয়</div><div id="monthIncome" class="card-value income">৳ 0</div></div>
+      <div class="card"><div class="card-title">এই মাসের ব্যয়</div><div id="monthExpense" class="card-value expense">৳ 0</div></div>
+    </div>
+
+    <div class="chart-box"><h3>📊 মাসিক আয়-ব্যয় (গত ৬ মাস)</h3><div class="chart-area"><canvas id="monthlyChart"></canvas></div></div>
+    <div class="chart-box"><h3>🍩 ব্যয় ক্যাটাগরি অনুযায়ী</h3><div class="chart-area"><canvas id="categoryChart"></canvas></div></div>
+    <div class="chart-box">
+      <h3>📌 বার্ষিক সারসংক্ষেপ</h3>
+      <div class="stat-grid">
+        <div class="stat"><h4>Year Income</h4><strong id="yearIncome">৳ 0</strong></div>
+        <div class="stat"><h4>Year Expense</h4><strong id="yearExpense">৳ 0</strong></div>
+        <div class="stat"><h4>Year Balance</h4><strong id="yearBalance">৳ 0</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENTRY -->
+  <section id="entry" class="page">
+    <h1 class="page-title">➕ নতুন এন্ট্রি</h1>
+    <div class="form-card">
+      <form id="transactionForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Type</label>
+            <select id="type" required>
+              <option value="">Select</option>
+              <option value="Income">আয় / Income</option>
+              <option value="Expense">ব্যয় / Expense</option>
+            </select>
+          </div>
+          <div class="form-group full"><label>Date</label><input type="date" id="date" required></div>
+          <div class="form-group full"><label>Main Category</label><select id="mainCategory" required><option value="">Select Type First</option></select></div>
+          <div class="form-group full"><label>Sub Category</label><select id="subCategory" required><option value="">Select Main First</option></select></div>
+          <div class="form-group full"><label>Child Category</label><select id="childCategory" required><option value="">Select Sub First</option></select></div>
+          <div class="form-group"><label>Amount (৳)</label><input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></div>
+          <div class="form-group"><label>Payment Method</label>
+            <select id="paymentMethod"><option>Cash</option><option>Bank</option><option>bKash</option><option>Nagad</option><option>Card</option><option>Other</option></select>
+          </div>
+          <div class="form-group full"><label>Description</label><input type="text" id="description" placeholder="বিবরণ"></div>
+        </div>
+        <div class="buttons">
+          <button class="btn primary" type="submit">💾 Save</button>
+          <button class="btn secondary" type="reset" id="resetEntryBtn">Reset</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- REPORTS -->
+  <section id="reports" class="page">
+    <h1 class="page-title">📋 বিস্তারিত রিপোর্ট</h1>
+    <div class="table-card">
+      <div class="filters">
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+        <select id="filterType"><option value="">All Type</option><option value="Income">Income</option><option value="Expense">Expense</option></select>
+        <select id="filterMain"><option value="">All Main Category</option></select>
+        <select id="filterSub"><option value="">All Sub Category</option></select>
+        <select id="filterChild"><option value="">All Child Category</option></select>
+        <select id="filterPayment"><option value="">All Payment</option><option>Cash</option><option>Bank</option><option>bKash</option><option>Nagad</option><option>Card</option><option>Other</option></select>
+        <input type="text" id="search" placeholder="Search...">
+      </div>
+      <div class="buttons">
+        <button class="btn primary" id="searchBtn" type="button">🔎 Search</button>
+        <button class="btn secondary" id="clearFilterBtn" type="button">Clear</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><h4>Filtered Income</h4><strong id="reportIncome">৳ 0</strong></div>
+        <div class="stat"><h4>Filtered Expense</h4><strong id="reportExpense">৳ 0</strong></div>
+        <div class="stat"><h4>Balance</h4><strong id="reportBalance">৳ 0</strong></div>
+      </div>
+    </div>
+    <div id="transactionList" class="tx-list"></div>
+  </section>
+
+  <!-- MONTHLY -->
+  <section id="monthly" class="page">
+    <h1 class="page-title">📅 মাসিক ক্লোজিং</h1>
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="form-group"><label>Year</label><select id="reportYear"></select></div>
+        <div class="form-group"><label>Month</label>
+          <select id="reportMonth">
+            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+          </select>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="btn primary" id="monthlyGenerateBtn" type="button">📊 Generate</button>
+        <button class="btn secondary" id="printBtn" type="button">🖨️ Print</button>
+      </div>
+    </div>
+    <div id="monthlyResult"></div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section id="categories" class="page">
+    <h1 class="page-title">⚙️ Category Control</h1>
+    <div class="form-card">
+      <p class="small-note"><strong>Main → Sub → Child Category</strong></p>
+      <div class="form-grid">
+        <div class="form-group full"><label>Type</label><select id="categoryType"><option value="Income">Income</option><option value="Expense">Expense</option></select></div>
+        <div class="form-group"><label>Main Category</label><input id="newMainCategory" placeholder="যেমন: Food"></div>
+        <div class="form-group"><label>Sub Category</label><input id="newSubCategory" placeholder="যেমন: Daily Meals"></div>
+        <div class="form-group full"><label>Child Category</label><input id="newChildCategory" placeholder="যেমন: Breakfast"></div>
+      </div>
+      <div class="buttons"><button class="btn success" id="addCategoryBtn" type="button">➕ Add Category</button></div>
+    </div>
+    <div class="table-card">
+      <h3 style="margin-top:0;font-size:15px">📂 Category Hierarchy</h3>
+      <div id="categoryHierarchy"></div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" class="page">
+    <h1 class="page-title">👤 Profile</h1>
+    <div class="form-card">
+      <div class="profile-row"><span>Application</span><strong>Digital Hisab</strong></div>
+      <div class="profile-row"><span>Version</span><strong>PWA 1.0 (Offline)</strong></div>
+      <div class="profile-row"><span>Storage</span><strong id="storageInfo">এই ডিভাইসে (IndexedDB)</strong></div>
+      <div class="profile-row"><span>Currency</span><strong>BDT (৳)</strong></div>
+      <div class="profile-row"><span>মোট Transaction</span><strong id="profileTxCount">0</strong></div>
+    </div>
+    <div class="form-card">
+      <h3 style="margin-top:0;font-size:15px">💾 Backup &amp; Restore</h3>
+      <p class="small-note">ডেটা শুধু এই ফোন/ব্রাউজারে থাকে। অন্য ডিভাইসে নিতে বা হারানো এড়াতে নিয়মিত Backup নিন।</p>
+      <div class="buttons">
+        <button class="btn primary" id="exportBtn" type="button">⬇️ Export Backup (JSON)</button>
+        <button class="btn secondary" id="importBtnTrigger" type="button">⬆️ Import Backup</button>
+        <input type="file" id="importFile" accept="application/json" class="hidden">
+      </div>
+    </div>
+    <div class="form-card">
+      <button class="btn secondary full" id="helpBtn" type="button" style="width:100%">❓ সহায়তা ও তথ্য</button>
+    </div>
+  </section>
+
+  <!-- HELP / ABOUT -->
+  <section id="help" class="page">
+    <h1 class="page-title">❓ সহায়তা ও তথ্য</h1>
+
+    <div class="form-card">
+      <h3 style="margin-top:0;font-size:15px">১. কীভাবে ব্যবহার করবেন?</h3>
+
+      <p class="small-note"><strong>প্রথমবার ব্যবহারের আগে</strong></p>
+      <ol style="padding-left:18px;font-size:13.5px;line-height:1.9;margin:0 0 14px">
+        <li><strong>⚙️ Category Control</strong> পেজে গিয়ে আগে আপনার নিজের মতো Income ও Expense ক্যাটাগরি তৈরি করে নিন। প্রতিটি ক্যাটাগরির ৩টি স্তর থাকে —
+          <em>Main → Sub → Child</em> (যেমন: Main = Food, Sub = Daily Meals, Child = Breakfast)।</li>
+      </ol>
+
+      <p class="small-note"><strong>দৈনন্দিন ব্যবহার</strong></p>
+      <ol start="2" style="padding-left:18px;font-size:13.5px;line-height:1.9;margin:0 0 14px">
+        <li><strong>➕ নতুন এন্ট্রি</strong> পেজ থেকে প্রতিদিনের আয়/ব্যয় যোগ করুন — Type, তারিখ, Category, Amount ও Payment Method দিয়ে <em>Save</em> চাপুন।</li>
+        <li><strong>🏠 Dashboard</strong>-এ সাথে সাথে মোট আয়, ব্যয়, ব্যালেন্স, Savings Rate এবং চার্ট আপডেট হয়ে যাবে।</li>
+        <li><strong>📋 বিস্তারিত রিপোর্ট</strong> পেজ থেকে তারিখ, Type, Category, Payment Method বা লিখে সার্চ করে পুরনো হিসাব খুঁজে বের করা যায়। প্রতিটি এন্ট্রি ✏️ দিয়ে এডিট বা 🗑️ দিয়ে ডিলিট করা যায়।</li>
+        <li><strong>📅 মাসিক ক্লোজিং</strong> পেজ থেকে যেকোনো মাসের সম্পূর্ণ হিসাব এক জায়গায় দেখা যায় এবং 🖨️ Print করে রাখা যায়।</li>
+      </ol>
+
+      <p class="small-note"><strong>ডেটা সুরক্ষিত রাখতে</strong></p>
+      <ol start="6" style="padding-left:18px;font-size:13.5px;line-height:1.9;margin:0">
+        <li><strong>👤 Profile</strong> পেজ থেকে নিয়মিত <strong>Export Backup (JSON)</strong> করে ফাইলটি নিরাপদ জায়গায় (Google Drive, ইমেইল ইত্যাদি) রেখে দিন — যেহেতু সব ডেটা এই ফোনেই থাকে, ব্রাউজারের ডেটা মুছে গেলে বা ফোন বদলালে এই ব্যাকআপ ফাইল দিয়েই <strong>Import Backup</strong> করে সব ফিরিয়ে আনা যাবে।</li>
+        <li>উপরে <strong>📲 Install</strong> বাটন চেপে হোমস্ক্রিনে অ্যাপ আকারে বসিয়ে নিলে ইন্টারনেট ছাড়াই সরাসরি খোলা যাবে, ব্রাউজার address bar ছাড়াই।</li>
+      </ol>
+    </div>
+
+    <div class="form-card">
+      <h3 style="margin-top:0;font-size:15px">২. আমাদের সম্পর্কে</h3>
+      <p style="font-size:13.5px;line-height:1.9;margin:0 0 10px">
+        <strong>Digital Hisab</strong> একটি সম্পূর্ণ বিনামূল্যের, প্রাইভেসি-ফোকাসড ব্যক্তিগত আয়-ব্যয়
+        হিসাবরক্ষণ অ্যাপ — বাংলা ভাষাভাষী মানুষদের দৈনন্দিন হিসাব সহজে রাখার জন্য তৈরি।
+      </p>
+      <p style="font-size:13.5px;line-height:1.9;margin:0 0 10px">
+        এই অ্যাপে <strong>কোনো সাইন-আপ, কোনো বিজ্ঞাপন এবং কোনো ডেটা কালেকশন নেই।</strong>
+        আপনার সব তথ্য — প্রতিটি হিসাব, ক্যাটাগরি, রিপোর্ট — শুধুমাত্র আপনার নিজের ফোন বা
+        ব্রাউজারে সংরক্ষিত থাকে। আমাদের কোনো সার্ভারে কিছুই পাঠানো হয় না, ইন্টারনেট সংযোগ
+        ছাড়াই পুরো অ্যাপটি কাজ করে।
+      </p>
+      <p style="font-size:13.5px;line-height:1.9;margin:0">
+        আমাদের লক্ষ্য সহজ, দ্রুত এবং নির্ভরযোগ্য একটি টুল দেওয়া, যাতে যে কেউ — ব্যবসায়ী,
+        চাকরিজীবী বা শিক্ষার্থী — নিজের আয়-ব্যয়ের সম্পূর্ণ চিত্র হাতের মুঠোয় রাখতে পারেন,
+        Main → Sub → Child পদ্ধতিতে যত খুশি বিস্তারিতভাবে ক্যাটাগরি সাজিয়ে।
+      </p>
+      <div class="profile-row" style="margin-top:14px"><span>Version</span><strong>PWA 1.0 (Offline)</strong></div>
+      <div class="profile-row"><span>ডেটা সংরক্ষণ</span><strong>শুধু আপনার ডিভাইসে</strong></div>
+      <div class="profile-row" style="border-bottom:0"><span>মূল্য</span><strong>সম্পূর্ণ বিনামূল্যে</strong></div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn secondary" id="helpBackBtn" type="button">← Profile-এ ফিরে যান</button>
+    </div>
+  </section>
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottomnav">
+  <button data-page="dashboard" class="active"><span class="ic">🏠</span>Dashboard</button>
+  <button data-page="entry"><span class="ic">➕</span>এন্ট্রি</button>
+  <button data-page="reports"><span class="ic">📋</span>রিপোর্ট</button>
+  <button data-page="monthly"><span class="ic">📅</span>মাসিক</button>
+  <button data-page="categories"><span class="ic">⚙️</span>Category</button>
+  <button data-page="profile"><span class="ic">👤</span>Profile</button>
+</nav>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h2>✏️ Edit Transaction</h2><button class="close" id="closeEditBtn">&times;</button></div>
+    <input type="hidden" id="editId">
+    <div class="form-grid">
+      <div class="form-group full"><label>Date</label><input type="date" id="editDate"></div>
+      <div class="form-group full"><label>Type</label><select id="editType"><option value="Income">Income</option><option value="Expense">Expense</option></select></div>
+      <div class="form-group full"><label>Main Category</label><select id="editMainCategory"></select></div>
+      <div class="form-group full"><label>Sub Category</label><select id="editSubCategory"></select></div>
+      <div class="form-group full"><label>Child Category</label><select id="editChildCategory"></select></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="editAmount" min="0.01" step="0.01"></div>
+      <div class="form-group"><label>Payment</label><select id="editPayment"><option>Cash</option><option>Bank</option><option>bKash</option><option>Nagad</option><option>Card</option><option>Other</option></select></div>
+      <div class="form-group full"><label>Description</label><input id="editDescription"></div>
+    </div>
+    <div class="buttons">
+      <button class="btn primary" id="saveEditBtn" type="button">💾 Update</button>
+      <button class="btn secondary" id="cancelEditBtn" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/db.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
