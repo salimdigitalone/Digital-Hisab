@@ -5,6 +5,18 @@ body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f3f6f
 .hidden{display:none !important}
 button,input,select{font:inherit}
 
+/* ---------- auth screen ---------- */
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:#0f172a}
+.auth-screen.hidden{display:none !important}
+.login-card{background:white;padding:30px 26px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.25);
+  width:100%;max-width:380px}
+.login-card h1{margin:0 0 6px;font-size:22px}
+.login-card h1 span{color:#2563eb}
+.login-card p{color:#6b7280;font-size:13px;margin-bottom:18px}
+.login-card input{width:100%;padding:12px;margin-bottom:12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px}
+.login-error{color:#dc2626;font-size:13px;margin-top:10px;min-height:16px}
+
 /* ---------- top app bar / install ---------- */
 .appbar{position:sticky;top:0;z-index:200;background:#111827;color:white;display:flex;align-items:center;
   justify-content:space-between;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px))}

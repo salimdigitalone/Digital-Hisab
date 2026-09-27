@@ -3,12 +3,77 @@
 let allTransactions = [];
 let allCategories = [];
 let deferredInstallPrompt = null;
+let appInitialized = false;
+let currentSessionEmail = null;
 
 document.addEventListener('DOMContentLoaded', boot);
 
-function boot() {
+async function boot() {
   registerServiceWorker();
   setupInstallPrompt();
+  setupAuthEvents();
+
+  try {
+    const session = await DB.getCurrentSession();
+    if (session) enterApp(session); else showAuthScreen();
+  } catch (e) {
+    showAuthScreen();
+  }
+
+  DB.onAuthStateChange((session) => {
+    if (session) enterApp(session); else showAuthScreen();
+  });
+}
+
+function showAuthScreen() {
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('appRoot').classList.add('hidden');
+}
+
+function enterApp(session) {
+  currentSessionEmail = session.user.email;
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appRoot').classList.remove('hidden');
+  setText('profileEmail', currentSessionEmail);
+  if (!appInitialized) {
+    appInitialized = true;
+    initializeApp();
+  } else {
+    loadCategories();
+    loadDashboard();
+  }
+}
+
+function setupAuthEvents() {
+  const errBox = document.getElementById('authError');
+  const hintBox = document.getElementById('authHint');
+
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    errBox.textContent = ''; hintBox.textContent = '';
+    const email = value('authEmail').trim(), password = value('authPassword');
+    if (!email || !password) { errBox.textContent = 'Email এবং Password দিন।'; return; }
+    try { await DB.signIn(email, password); }
+    catch (e) { errBox.textContent = e.message; }
+  });
+
+  document.getElementById('signupBtn').addEventListener('click', async () => {
+    errBox.textContent = ''; hintBox.textContent = '';
+    const email = value('authEmail').trim(), password = value('authPassword');
+    if (!email || !password) { errBox.textContent = 'Email এবং Password দিন।'; return; }
+    if (password.length < 6) { errBox.textContent = 'Password কমপক্ষে ৬ অক্ষর হতে হবে।'; return; }
+    try {
+      const result = await DB.signUp(email, password);
+      if (result.session) return; // auto-confirmed, onAuthStateChange will handle it
+      hintBox.textContent = '✅ একাউন্ট তৈরি হয়েছে। আপনার Email-এ পাঠানো confirmation লিংকে ক্লিক করে তারপর লগইন করুন।';
+    } catch (e) { errBox.textContent = e.message; }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try { await DB.signOut(); } catch (e) { showError(e); }
+  });
+}
+
+function initializeApp() {
   setupNavigation();
   setToday();
   setupYears();

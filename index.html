@@ -16,6 +16,23 @@
 </head>
 <body>
 
+<!-- AUTH (Supabase login / sign up) -->
+<div id="authScreen" class="auth-screen">
+  <div class="login-card">
+    <h1>Digital <span>Hisab</span></h1>
+    <p>ক্লাউড সিঙ্কের জন্য Email দিয়ে লগইন করুন</p>
+    <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
+    <input type="password" id="authPassword" placeholder="Password (কমপক্ষে ৬ অক্ষর)" autocomplete="current-password">
+    <button class="btn primary" id="loginBtn" style="width:100%;margin-bottom:8px">লগইন করুন</button>
+    <button class="btn secondary" id="signupBtn" style="width:100%">নতুন একাউন্ট তৈরি করুন</button>
+    <div class="login-error" id="authError"></div>
+    <p class="small-note" id="authHint"></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appRoot" class="hidden">
+
 <div class="appbar">
   <div class="brand">Digital <span>Hisab</span></div>
   <button id="installBtn" class="hidden">📲 Install</button>
@@ -157,10 +174,12 @@
     <h1 class="page-title">👤 Profile</h1>
     <div class="form-card">
       <div class="profile-row"><span>Application</span><strong>Digital Hisab</strong></div>
-      <div class="profile-row"><span>Version</span><strong>PWA 1.0 (Offline)</strong></div>
-      <div class="profile-row"><span>Storage</span><strong id="storageInfo">এই ডিভাইসে (IndexedDB)</strong></div>
+      <div class="profile-row"><span>Version</span><strong>Cloud 1.0 (Supabase)</strong></div>
+      <div class="profile-row"><span>Login Email</span><strong id="profileEmail">-</strong></div>
+      <div class="profile-row"><span>Storage</span><strong id="storageInfo">Supabase Cloud (সব ডিভাইসে Sync)</strong></div>
       <div class="profile-row"><span>Currency</span><strong>BDT (৳)</strong></div>
-      <div class="profile-row"><span>মোট Transaction</span><strong id="profileTxCount">0</strong></div>
+      <div class="profile-row" style="border-bottom:0"><span>মোট Transaction</span><strong id="profileTxCount">0</strong></div>
+      <div class="buttons" style="margin-top:14px"><button class="btn danger" id="logoutBtn" type="button" style="width:100%">🚪 লগআউট</button></div>
     </div>
     <div class="form-card">
       <h3 style="margin-top:0;font-size:15px">💾 Backup &amp; Restore</h3>
@@ -221,9 +240,9 @@
         চাকরিজীবী বা শিক্ষার্থী — নিজের আয়-ব্যয়ের সম্পূর্ণ চিত্র হাতের মুঠোয় রাখতে পারেন,
         Main → Sub → Child পদ্ধতিতে যত খুশি বিস্তারিতভাবে ক্যাটাগরি সাজিয়ে।
       </p>
-      <div class="profile-row" style="margin-top:14px"><span>Version</span><strong>PWA 1.0 (Offline)</strong></div>
-      <div class="profile-row"><span>ডেটা সংরক্ষণ</span><strong>শুধু আপনার ডিভাইসে</strong></div>
-      <div class="profile-row" style="border-bottom:0"><span>মূল্য</span><strong>সম্পূর্ণ বিনামূল্যে</strong></div>
+      <div class="profile-row" style="margin-top:14px"><span>Version</span><strong>Cloud 1.0 (Supabase)</strong></div>
+      <div class="profile-row"><span>ডেটা সংরক্ষণ</span><strong>Supabase Cloud — সব ডিভাইসে Sync হয়</strong></div>
+      <div class="profile-row" style="border-bottom:0"><span>মূল্য</span><strong>সম্পূর্ণ বিনামূল্যে (Supabase Free Tier)</strong></div>
     </div>
 
     <div class="buttons">
@@ -266,6 +285,10 @@
 
 <div id="toast"></div>
 
+</div><!-- /#appRoot -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabaseConfig.js"></script>
 <script src="js/db.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/app.js"></script>
