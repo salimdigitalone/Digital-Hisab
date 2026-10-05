@@ -33,12 +33,28 @@
 <!-- APP -->
 <div id="appRoot" class="hidden">
 
-<div class="appbar">
-  <div class="brand">Digital <span>Hisab</span></div>
-  <button id="installBtn" class="hidden">📲 Install</button>
-</div>
+<nav class="sidebar">
+  <div class="sidebar-logo">Digital <span>Hisab</span></div>
+  <div class="sidebar-menu">
+    <button data-page="dashboard" class="active"><span class="ic">🏠</span><span class="label">Dashboard</span></button>
+    <button data-page="entry"><span class="ic">➕</span><span class="label">নতুন এন্ট্রি</span></button>
+    <button data-page="reports"><span class="ic">📋</span><span class="label">বিস্তারিত রিপোর্ট</span></button>
+    <button data-page="monthly"><span class="ic">📅</span><span class="label">মাসিক ক্লোজিং</span></button>
+    <button data-page="categories"><span class="ic">⚙️</span><span class="label">Category Control</span></button>
+    <button data-page="profile"><span class="ic">👤</span><span class="label">Profile</span></button>
+  </div>
+</nav>
 
 <main class="main">
+
+  <div class="topbar">
+    <h1 id="topbarTitle">Dashboard</h1>
+    <div class="user-widget">
+      <span id="topEmail"></span>
+      <button id="installBtn" class="hidden">📲 Install</button>
+      <button id="topLogoutBtn">লগআউট</button>
+    </div>
+  </div>
 
   <!-- DASHBOARD -->
   <section id="dashboard" class="page active">
@@ -253,15 +269,6 @@
   </section>
 </main>
 
-<!-- BOTTOM NAV -->
-<nav class="bottomnav">
-  <button data-page="dashboard" class="active"><span class="ic">🏠</span>Dashboard</button>
-  <button data-page="entry"><span class="ic">➕</span>এন্ট্রি</button>
-  <button data-page="reports"><span class="ic">📋</span>রিপোর্ট</button>
-  <button data-page="monthly"><span class="ic">📅</span>মাসিক</button>
-  <button data-page="categories"><span class="ic">⚙️</span>Category</button>
-  <button data-page="profile"><span class="ic">👤</span>Profile</button>
-</nav>
 
 <!-- EDIT MODAL -->
 <div id="editModal" class="modal">

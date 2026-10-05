@@ -1,4 +1,4 @@
-const CACHE_NAME = 'digital-hisab-v3';
+const CACHE_NAME = 'digital-hisab-v4';
 const ASSETS = [
   './',
   './index.html',

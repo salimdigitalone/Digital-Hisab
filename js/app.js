@@ -35,6 +35,7 @@ function enterApp(session) {
   document.getElementById('authScreen').classList.add('hidden');
   document.getElementById('appRoot').classList.remove('hidden');
   setText('profileEmail', currentSessionEmail);
+  setText('topEmail', currentSessionEmail);
   if (!appInitialized) {
     appInitialized = true;
     initializeApp();
@@ -63,12 +64,16 @@ function setupAuthEvents() {
     if (password.length < 6) { errBox.textContent = 'Password কমপক্ষে ৬ অক্ষর হতে হবে।'; return; }
     try {
       const result = await DB.signUp(email, password);
-      if (result.session) return; // auto-confirmed, onAuthStateChange will handle it
+      if (result.session) return;
       hintBox.textContent = '✅ একাউন্ট তৈরি হয়েছে। আপনার Email-এ পাঠানো confirmation লিংকে ক্লিক করে তারপর লগইন করুন।';
     } catch (e) { errBox.textContent = e.message; }
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try { await DB.signOut(); } catch (e) { showError(e); }
+  });
+
+  document.getElementById('topLogoutBtn').addEventListener('click', async () => {
     try { await DB.signOut(); } catch (e) { showError(e); }
   });
 }
@@ -111,9 +116,13 @@ function setupInstallPrompt() {
   window.addEventListener('appinstalled', () => btn.classList.add('hidden'));
 }
 
-/* ---------------- navigation ---------------- */
+const PAGE_TITLES = {
+  dashboard: '🏠 Dashboard', entry: '➕ নতুন এন্ট্রি', reports: '📋 বিস্তারিত রিপোর্ট',
+  monthly: '📅 মাসিক ক্লোজিং', categories: '⚙️ Category Control', profile: '👤 Profile', help: '❓ সহায়তা ও তথ্য'
+};
+
 function setupNavigation() {
-  document.querySelectorAll('.bottomnav button[data-page]').forEach((btn) => {
+  document.querySelectorAll('.sidebar-menu button[data-page]').forEach((btn) => {
     btn.addEventListener('click', () => showPage(btn.dataset.page, btn));
   });
 }
@@ -121,8 +130,9 @@ function setupNavigation() {
 function showPage(page, element) {
   document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
   document.getElementById(page).classList.add('active');
-  document.querySelectorAll('.bottomnav button').forEach((b) => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-menu button').forEach((b) => b.classList.remove('active'));
   if (element) element.classList.add('active');
+  setText('topbarTitle', PAGE_TITLES[page] || 'Digital Hisab');
 
   if (page === 'dashboard') loadDashboard();
   if (page === 'entry') loadMainCategories('entry');
@@ -134,7 +144,6 @@ function showPage(page, element) {
 
 function setToday() { const d = document.getElementById('date'); if (d) d.value = new Date().toISOString().slice(0, 10); }
 
-/* ---------------- categories ---------------- */
 function loadCategories() {
   DB.getCategories().then((data) => {
     allCategories = data || [];
@@ -207,7 +216,6 @@ function submitTransaction(event) {
 }
 function resetEntry() { setToday(); loadMainCategories('entry'); }
 
-/* ---------------- dashboard ---------------- */
 async function loadDashboard() {
   try {
     const transactions = await DB.getTransactions();
@@ -283,7 +291,6 @@ function computeDashboard(rows) {
   };
 }
 
-/* ---------------- reports ---------------- */
 async function loadTransactions() {
   try { allTransactions = await DB.getTransactions(); renderTransactions(allTransactions); }
   catch (e) { showError(e); }
@@ -372,7 +379,6 @@ function clearFilters() {
   loadReportFilters(); loadTransactions();
 }
 
-/* ---------------- monthly closing ---------------- */
 function setupMonthlyEvents() {
   document.getElementById('monthlyGenerateBtn').addEventListener('click', loadMonthlyReport);
   document.getElementById('printBtn').addEventListener('click', () => window.print());
@@ -415,7 +421,6 @@ async function loadMonthlyReport() {
     <div class="tx-list">${rows || '<div class="empty-note">কোনো হিসাব পাওয়া যায়নি</div>'}</div>`;
 }
 
-/* ---------------- category management ---------------- */
 function setupCategoryEvents() { document.getElementById('addCategoryBtn').addEventListener('click', addNewCategory); }
 function addNewCategory() {
   const type = value('categoryType');
@@ -460,7 +465,6 @@ function removeCategory(type, main, sub, child) {
   DB.disableCategory({ type, mainCategory: main, subCategory: sub, childCategory: child }).then(() => { showToast('Category disabled'); loadCategories(); }).catch(showError);
 }
 
-/* ---------------- edit modal ---------------- */
 function setupEditEvents() {
   document.getElementById('editType').addEventListener('change', () => loadMainCategories('edit'));
   document.getElementById('editMainCategory').addEventListener('change', () => loadSubCategories('edit'));
@@ -494,7 +498,6 @@ function removeTransaction(id) {
   DB.deleteTransaction(id).then(() => { showToast('🗑️ Transaction deleted'); loadTransactions(); loadDashboard(); }).catch(showError);
 }
 
-/* ---------------- backup / restore ---------------- */
 function setupBackupEvents() {
   document.getElementById('exportBtn').addEventListener('click', doExport);
   document.getElementById('importBtnTrigger').addEventListener('click', () => document.getElementById('importFile').click());
@@ -531,7 +534,7 @@ function doImport(event) {
 
 function setupHelpEvents() {
   document.getElementById('helpBtn').addEventListener('click', () => showPage('help', null));
-  document.getElementById('helpBackBtn').addEventListener('click', () => showPage('profile', document.querySelector('.bottomnav button[data-page="profile"]')));
+  document.getElementById('helpBackBtn').addEventListener('click', () => showPage('profile', document.querySelector('.sidebar-menu button[data-page="profile"]')));
 }
 
 async function refreshProfile() {
@@ -539,7 +542,6 @@ async function refreshProfile() {
   catch (e) { /* ignore */ }
 }
 
-/* ---------------- utilities ---------------- */
 function value(id) { const el = document.getElementById(id); return el ? el.value : ''; }
 function setText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
 function money(v) { return '৳ ' + Number(v || 0).toLocaleString('en-BD', { maximumFractionDigits: 2 }); }
